@@ -11,9 +11,9 @@ export default function Header() {
   const [clicked, setClicked] = useState(false);
 
   return (
-    <div className="bg-emerald-400 border-b-2 border-green-600">
-      <div className="mx-auto flex w-full h-14 justify-between items-center max-w-6xl px-2 relative">
-        <span className="font-bold px-2 py-1 bg-gradient-to-r from-green-500 to-teal-400 rounded-lg text-white text-xl cursor-default">
+    <div className="bg-gradient-to-r from-green-500 to-blue-600 text-white border-b-2 border-green-600">
+      <div className="mx-auto flex w-full h-16 justify-between items-center max-w-6xl px-2 relative">
+        <span className="font-bold px-2 py-1 bg-gradient-to-r from-green-400 to-blue-500 rounded-lg text-white text-2xl cursor-default">
           TravelGuider
         </span>
         <div className="hidden md:flex gap-8 items-center ">
@@ -22,8 +22,8 @@ export default function Header() {
               key={index}
               className={
                 path === "/" + link
-                  ? "font-bold scale-110 text-green-600 cursor-default"
-                  : "cursor-pointer hover:scale-110"
+                  ? "font-bold scale-110 text-lime-500 cursor-default"
+                  : "cursor-pointer hover:scale-110 drop-shadow text-lg font-semibold"
               }
             >
               <Link to={link}>{link}</Link>
