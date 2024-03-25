@@ -10,7 +10,7 @@ export default function Signup() {
         backgroundImage:
           "linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url(signup.jpg)",
       }}
-      className="w-full h-[94vh] bg-center bg-cover flex justify-center items-center"
+      className="w-full min-h-[94vh] bg-center bg-cover flex justify-center items-center "
     >
       <div className="text-white p-6 border-2 border-white rounded-md max-w-4xl flex flex-col gap-8 m-6">
         <h1 className="font-bold text-3xl text-center drop-shadow-md">
@@ -87,7 +87,7 @@ export default function Signup() {
           <h3 className="font-semibold">Already a member?</h3>
           <p>
             <span className="font-semibold underline">
-              <Link to="signin">Sign in</Link>
+              <Link to="/signin">Sign in</Link>
             </span>{" "}
             in using your TravelGuider account.
           </p>
