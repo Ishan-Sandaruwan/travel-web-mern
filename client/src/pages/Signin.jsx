@@ -1,9 +1,48 @@
-import React from "react";
-import { Button, TextInput } from "flowbite-react";
 import { HiMail } from "react-icons/hi";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Button, TextInput,Spinner } from "flowbite-react";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Signin() {
+  const navigate = useNavigate();
+  const [data, setData] = useState({});
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) => {
+    setData({ ...data, [e.target.id]: e.target.value.trim() });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    //validate
+    var emailPat = /\S+@\S+\.\S+/;
+    if (!emailPat.test(data.email)) {
+      return setError("enter valid email address");
+    }
+    console.log(data);
+    try {
+      
+      setLoading(true);
+      setError(null);
+      const res = await fetch("/api/auth/signin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      const data2 = await res.json();
+      if (data2.success == false) {
+        setLoading(false);
+        return setError(data2.message);
+      } else {
+        setLoading(false);
+        navigate("/Home");
+      }
+    } catch (error) {
+      setError(error.message);
+      setLoading(false);
+    }
+  };
   return (
     <div
       style={{
@@ -16,9 +55,12 @@ export default function Signin() {
         <h1 className="font-bold text-3xl text-center drop-shadow-md">
           Sign in to unlock the best Travel Guider in{" "}
           <span className="text-lime-400 text-4xl block">Sri Lanka</span>
-          <span className="float-left text-2xl">Welcome back.</span> 
+          <span className="float-left text-2xl">Welcome back.</span>
         </h1>
-        <form className="flex max-w-md flex-col gap-4 w-full">
+        <form
+          className="flex max-w-md flex-col gap-4 w-full"
+          onSubmit={handleSubmit}
+        >
           <div className="row">
             <div className="inp">
               <label htmlFor="email" className="drop-shadow-md">
@@ -30,31 +72,46 @@ export default function Signin() {
                 placeholder="name@email.com"
                 rightIcon={HiMail}
                 required
+                onChange={handleChange}
               />
             </div>
           </div>
           <div className="row">
             <div className="inp">
               <label htmlFor="password" className="drop-shadow-md">
-                Create Password
+                Password
               </label>
               <TextInput
                 id="password"
                 type="password"
                 required
                 placeholder="**********"
+                onChange={handleChange}
               />
             </div>
           </div>
 
-          <div className="row">
+          <div className="row flex flex-col gap-2">
             <Button
               gradientMonochrome="lime"
               className="w-full text-green-700"
               size="lg"
+              type="submit"
             >
-              Sign in
+              {loading == true ? (
+                <>
+                  <Spinner aria-label="Spinner button example" size="sm" />
+                  <span className="pl-3">Loading...</span>
+                </>
+              ) : (
+                "Sign in"
+              )}
             </Button>
+            {error && (
+              <span className="text-red-600 text-sm font-semibold ">
+                {error}
+              </span>
+            )}
           </div>
         </form>
         <div className="text-center">

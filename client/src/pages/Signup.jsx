@@ -35,11 +35,10 @@ export default function Signup() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(restData),
       });
-      const data = await res.json();
-      console.log(data);
-      if (data.success == false) {
+      const data2 = await res.json();
+      if (data2.success == false) {
         setLoading(false);
-        return setError(data.message);
+        return setError(data2.message);
       } else {
         setLoading(false);
         navigate("/signin");
