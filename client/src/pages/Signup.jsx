@@ -3,12 +3,15 @@ import { Button, TextInput } from "flowbite-react";
 import { HiMail } from "react-icons/hi";
 import { Spinner } from "flowbite-react";
 import { Link, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from 'react-redux'
+import { signinStart, signinSuccess ,signinFailure } from '../redux/user/userSlice.js'
+
 
 export default function Signup() {
+  const dispatch = useDispatch();
+  const {error,loading} = useSelector((state) => state.user);
   const navigate = useNavigate();
   const [data, setData] = useState({});
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setData({ ...data, [e.target.id]: e.target.value.trim() });
@@ -19,17 +22,15 @@ export default function Signup() {
     //validate
     var emailPat = /\S+@\S+\.\S+/;
     if (data.password !== data.rePassword) {
-      return setError("password doesn't match");
+      return dispatch(signinFailure('password does not match '));
     } else if (data.password.length < 6) {
-      return setError("Password should be at least 6 characters long");
+      return dispatch(signinFailure('password at least 6 characters long '));
     } else if(!emailPat.test(data.email)){
-      return setError("enter valid email address");
+      return dispatch(signinFailure('enter valid email address '));
     }
-    setError(null);
     const { rePassword: rePas, ...restData } = data;
     try {
-      setLoading(true);
-      setError(null);
+      dispatch(signinStart());
       const res = await fetch("/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -37,16 +38,13 @@ export default function Signup() {
       });
       const data2 = await res.json();
       if (data2.success == false) {
-        setLoading(false);
-        return setError(data2.message);
+        return dispatch(signinFailure(data2.message));
       } else {
-        setLoading(false);
+        dispatch(signinSuccess(null));
         navigate("/signin");
       }
     } catch (error) {
-      console.error(error);
-      setError(error.message);
-      setLoading(false);
+      dispatch(signinFailure(error.message));
     }
   };
 
