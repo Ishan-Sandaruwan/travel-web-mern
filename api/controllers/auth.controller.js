@@ -47,7 +47,10 @@ export const signin = async (req, res, next) => {
     if (!bcryptjs.compareSync(password, user.password)) {
       return next(errorHandler(400, "Password doesn't match"));
     }
-    const token = jwt.sign({ id: user._id }, process.env.JWT_KEY);
+    const token = jwt.sign(
+      { id: user._id, isAdmin: user.isAdmin },
+      process.env.JWT_KEY
+    );
     const { password: pass, ...rest } = user._doc;
     res
       .status(200)

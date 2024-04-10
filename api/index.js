@@ -28,8 +28,8 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 
-app.listen(3000, () => {
-  console.log("Server is running on port 3000");
+app.listen(3001, () => {
+  console.log("Server is running on port 3001");
 });
 
 app.use('/api/auth',authRoutes);
