@@ -6,7 +6,8 @@ import { HiBars3BottomRight } from "react-icons/hi2";
 import { Dropdown } from "flowbite-react";
 import { HiCog, HiLogout, HiViewGrid } from "react-icons/hi";
 import { Avatar } from "flowbite-react";
-import { useSelector } from "react-redux";
+import { signOut } from "../redux/user/userSlice.js";
+import { useSelector, useDispatch } from "react-redux";
 
 export default function Header() {
   const links = ["Home", "Discover", "Trips", "Review", "More"];
@@ -14,6 +15,24 @@ export default function Header() {
   const navigate = useNavigate();
   const [clicked, setClicked] = useState(false);
   const { currentUser } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+
+  const handleSignOut = async (e) => {
+    try {
+      const res = await fetch("/api/user/signout", {
+        method: "POST",
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        console.log(data.message);
+      } else {
+        dispatch(signOut());
+        navigate("/Home");
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
 
   return (
     <div className="bg-gradient-to-r from-green-500 to-blue-600 text-white border-b-2 border-green-600">
@@ -57,7 +76,9 @@ export default function Header() {
               <Dropdown.Item icon={HiViewGrid}>Dashboard</Dropdown.Item>
               <Dropdown.Item icon={HiCog}>Settings</Dropdown.Item>
               <Dropdown.Divider />
-              <Dropdown.Item icon={HiLogout}>Sign out</Dropdown.Item>
+              <Dropdown.Item icon={HiLogout} onClick={handleSignOut}>
+                Sign out
+              </Dropdown.Item>
             </Dropdown>
           </div>
         ) : (
