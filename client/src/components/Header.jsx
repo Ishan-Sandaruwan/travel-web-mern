@@ -3,12 +3,17 @@ import { Button } from "flowbite-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { PiSignInBold } from "react-icons/pi";
 import { HiBars3BottomRight } from "react-icons/hi2";
+import { Dropdown } from "flowbite-react";
+import { HiCog, HiCurrencyDollar, HiLogout, HiViewGrid } from "react-icons/hi";
+import { Avatar } from "flowbite-react";
+import { useSelector } from "react-redux";
 
 export default function Header() {
   const links = ["Home", "Discover", "Trips", "Review", "More"];
   const path = useLocation().pathname;
   const navigate = useNavigate();
   const [clicked, setClicked] = useState(false);
+  const { currentUser } = useSelector((state) => state.user);
 
   return (
     <div className="bg-gradient-to-r from-green-500 to-blue-600 text-white border-b-2 border-green-600">
@@ -30,20 +35,48 @@ export default function Header() {
             </span>
           ))}
         </div>
-        <Button
-          gradientDuoTone="greenToBlue"
-          outline
-          className="absolute right-14 md:static md:right-0"
-          onClick={() => {
-            navigate("/signin");
-          }}
-        >
-          Sign in
-          <PiSignInBold className="text-lg ml-2" />
-        </Button>
+
+        {currentUser != null ? (
+          <div className="absolute right-14 md:static md:right-0">
+            <Dropdown
+              label={
+                <Avatar
+                  alt="User settings"
+                  img={currentUser.profilePicture}
+                  rounded
+                  inline
+                />
+              }
+              style={{ backgroundColor: "transparent" }}
+            >
+              <Dropdown.Header>
+                <span className="block text-sm">{currentUser.firstName}</span>
+                <span className="block truncate text-sm font-medium">
+                  {currentUser.email}
+                </span>
+              </Dropdown.Header>
+              <Dropdown.Item icon={HiViewGrid}>Dashboard</Dropdown.Item>
+              <Dropdown.Item icon={HiCog}>Settings</Dropdown.Item>
+              <Dropdown.Divider />
+              <Dropdown.Item icon={HiLogout}>Sign out</Dropdown.Item>
+            </Dropdown>
+          </div>
+        ) : (
+          <Button
+            gradientDuoTone="greenToBlue"
+            outline
+            className="absolute right-14 md:static md:right-0"
+            onClick={() => {
+              navigate("/signin");
+            }}
+          >
+            Sign in
+            <PiSignInBold className="text-lg ml-2" />
+          </Button>
+        )}
 
         <HiBars3BottomRight
-          className={`md:hidden inlin text-2xl ${
+          className={`md:hidden inlin text-2xl  ${
             clicked && "transition-transform rotate-180"
           }`}
           onClick={() => setClicked(!clicked)}
@@ -51,11 +84,11 @@ export default function Header() {
 
         {/* mobile view menu bar */}
         {clicked && (
-          <div className="absolute flex flex-col text-white top-16 w-full shadow-lg shadow-emerald-300">
+          <div className="-translate-x-2 z-10  absolute flex flex-col text-white top-16 w-full shadow-lg shadow-emerald-300 ">
             {links.map((link, index) => (
               <span
                 key={index}
-                className={`w-full border-b-2 text-center border-white bg-emerald-500 h-8 hover:bg-emerald-600 transition-transform ${
+                className={`w-full border-b-2 text-center border-white bg-emerald-800 z-10 h-8 hover:bg-emerald-600 transition-transform ${
                   path === "/" + link ? "font-bold" : ""
                 }`}
               >

@@ -23,7 +23,6 @@ export default function Signin() {
     if (!emailPat.test(data.email)) {
       return dispatch(signinFailure('invalid email address '));
     }
-    console.log(data);
     try {
       dispatch(signinStart());
       const res = await fetch("/api/auth/signin", {
