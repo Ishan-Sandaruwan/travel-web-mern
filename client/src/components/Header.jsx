@@ -4,7 +4,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { PiSignInBold } from "react-icons/pi";
 import { HiBars3BottomRight } from "react-icons/hi2";
 import { Dropdown } from "flowbite-react";
-import { HiCog, HiCurrencyDollar, HiLogout, HiViewGrid } from "react-icons/hi";
+import { HiCog, HiLogout, HiViewGrid } from "react-icons/hi";
 import { Avatar } from "flowbite-react";
 import { useSelector } from "react-redux";
 
@@ -44,7 +44,6 @@ export default function Header() {
                   alt="User settings"
                   img={currentUser.profilePicture}
                   rounded
-                  inline
                 />
               }
               style={{ backgroundColor: "transparent" }}
