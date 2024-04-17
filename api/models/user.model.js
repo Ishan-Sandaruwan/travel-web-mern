@@ -29,6 +29,13 @@ const userShema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    bg: {
+      type: String,
+      default: "https://images.hdqwalls.com/wallpapers/travel-hd.jpg",
+    },
+    city: {
+      type: String,
+    },
   },
   { timestamps: true }
 );

@@ -91,6 +91,7 @@ function Dashboard() {
       },
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          console.log(downloadURL);
           setFormData({ ...formData, bg: downloadURL });
         });
       }
@@ -99,14 +100,11 @@ function Dashboard() {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
-    setState("Wait...");
     try {
       if (imageFile) {
-        setState("Profile picture uploading...");
         await uploadImage(imageFile);
       }
       if (bg) {
-        setState("Background photo uploading...");
         await uploadBgImage(bg);
       }
       if (formData.old_pass) {
@@ -114,13 +112,11 @@ function Dashboard() {
           return dispatch(updateFailure("password doesn't match"));
         }
       }
-      setState("Updating...");
       const { old_pass: old_pass, ...restData } = formData;
-
       dispatch(updateStart());
       const res = await fetch(`/api/user/update/${currentUser._id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", credentials: "include" },
         body: JSON.stringify(restData),
       });
       const data2 = await res.json();
@@ -128,22 +124,20 @@ function Dashboard() {
         return dispatch(updateFailure(data2.message));
       } else {
         dispatch(updateSuccess(data2));
-        console.log("updated successfully");
+        // onCloseModal();
       }
     } catch (error) {
       dispatch(updateFailure(error.message));
-    } finally {
-      setState(null); // Reset state
     }
   };
 
-console.log(formData);
+  console.log(formData);
 
   return (
     <div className="bg-slate-300 text-slate-800">
       <img
         alt="cover photo"
-        src="https://images.hdqwalls.com/wallpapers/travel-hd.jpg"
+        src={currentUser.bg}
         className="h-[40vh] w-full object-cover"
       />
       <div className="max-w-5xl mx-auto bg-white flex flex-col gap-8 p-8 md:-translate-y-8 lg:-translate-y-16 mb-4">
@@ -318,8 +312,8 @@ console.log(formData);
                 <Button gradientMonochrome="failure" onClick={onCloseModal}>
                   Cansel
                 </Button>
-                <Button gradientMonochrome="lime" type="submit">
-                  Update Profile
+                <Button gradientMonochrome="lime" type="submit" disabled={loading} >
+                  {loading ? 'Loading...' : 'Update Profile'}
                 </Button>
               </div>
             </form>
