@@ -1,17 +1,23 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { Button, Checkbox, Label, Modal, TextInput } from "flowbite-react";
+import {
+  Button,
+  Checkbox,
+  Label,
+  Modal,
+  TextInput,
+  FileInput,
+} from "flowbite-react";
 import { useState } from "react";
 
 function Dashboard() {
   const { currentUser } = useSelector((state) => state.user);
-
   const [openModal, setOpenModal] = useState(false);
+
   const [email, setEmail] = useState("");
 
   function onCloseModal() {
     setOpenModal(false);
-    setEmail("");
   }
 
   return (
@@ -47,7 +53,11 @@ function Dashboard() {
           </div>
         </div>
         <div className="">
-          <Button color="light" className="w-full" onClick={() => setOpenModal(true)}>
+          <Button
+            color="light"
+            className="w-full"
+            onClick={() => setOpenModal(true)}
+          >
             Edite Profile
           </Button>
         </div>
@@ -69,60 +79,86 @@ function Dashboard() {
         </div>
       </div>
 
-
-
       <Modal show={openModal} size="md" onClose={onCloseModal} popup>
         <Modal.Header />
         <Modal.Body>
           <div className="space-y-6">
-            <h3 className="text-xl font-medium text-gray-900 dark:text-white">
-              Sign in to our platform
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+              Add or edite your Profile data
             </h3>
+            <div className="flex gap-4">
+              <div className="flex-1">
+                <div className="mb-2 block">
+                  <Label htmlFor="fname" value="First Name" />
+                </div>
+                <TextInput id="fname" value={currentUser.firstName} required />
+              </div>
+              <div className="flex-1">
+                <div className="mb-2 block">
+                  <Label htmlFor="lname" value="Last Name" />
+                </div>
+                <TextInput id="lname" value={currentUser.lastName} required />
+              </div>
+            </div>
             <div>
               <div className="mb-2 block">
-                <Label htmlFor="email" value="Your email" />
+                <Label htmlFor="email" value="email" />
               </div>
               <TextInput
                 id="email"
-                placeholder="name@company.com"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
+                type="email"
+                value={currentUser.email}
                 required
               />
             </div>
             <div>
               <div className="mb-2 block">
-                <Label htmlFor="password" value="Your password" />
+                <Label htmlFor="city" value="Current City" />
               </div>
-              <TextInput id="password" type="password" required />
+              <TextInput id="city" value={currentUser.city} required />
             </div>
-            <div className="flex justify-between">
-              <div className="flex items-center gap-2">
-                <Checkbox id="remember" />
-                <Label htmlFor="remember">Remember me</Label>
+            <div>
+              <div className="mb-2 block">
+                <Label htmlFor="about" value="About you" />
               </div>
+              <textarea
+                name=""
+                id="about"
+                cols="46"
+                rows="4"
+                className="rounded-md border-slate-400 text-sm"
+              ></textarea>
+            </div>
+            <div>
+              <div className="mb-2 block">
+                <Label htmlFor="profilePic" value="profile picture" />
+              </div>
+              <FileInput id="profilePic" />
+            </div>
+            <div>
+              <div className="mb-2 block">
+                <Label htmlFor="bg" value="Background Photo" />
+              </div>
+              <FileInput id="bg" />
+            </div>
+            <div className="flex flex-col gap-3">
               <a
                 href="#"
-                className="text-sm text-cyan-700 hover:underline dark:text-cyan-500"
+                className="text-sm text-red-700 hover:underline "
               >
-                Lost Password?
+                Change Password
               </a>
+              <TextInput id="city" placeholder="old password" required />
+              <TextInput id="city" placeholder="new password" required />
             </div>
-            <div className="w-full">
-              <Button>Log in to your account</Button>
-            </div>
-            <div className="flex justify-between text-sm font-medium text-gray-500 dark:text-gray-300">
-              Not registered?&nbsp;
-              <a
-                href="#"
-                className="text-cyan-700 hover:underline dark:text-cyan-500"
-              >
-                Create account
-              </a>
+            <div className="flex justify-between py-2">
+              <Button gradientMonochrome="failure" onClick={onCloseModal}>Cansel</Button>
+              <Button gradientMonochrome="lime">Update Profile</Button>
             </div>
           </div>
         </Modal.Body>
       </Modal>
+      
     </div>
   );
 }
