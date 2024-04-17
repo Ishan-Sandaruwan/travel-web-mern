@@ -70,11 +70,36 @@ function Dashboard() {
           <p> Add a website</p>
           <p>Write some details about yourself</p>
         </div>
-        <div className="bg-white flex-grow p-4 flex-wrap">
+        <div className="bg-white flex-grow p-4 flex flex-wrap ">
           <img
             alt="add photo"
             src="https://cdn1.iconfinder.com/data/icons/photo-editing-glyph/32/add_image_photo-512.png"
-            className="w-32 h-32 object-cover"
+            className="w-36 h-36 object-cover"
+          />
+          <img
+            alt="add photo"
+            src="https://cdn1.iconfinder.com/data/icons/photo-editing-glyph/32/add_image_photo-512.png"
+            className="w-36 h-36 object-cover"
+          />
+          <img
+            alt="add photo"
+            src="https://cdn1.iconfinder.com/data/icons/photo-editing-glyph/32/add_image_photo-512.png"
+            className="w-36 h-36 object-cover"
+          />
+          <img
+            alt="add photo"
+            src="https://cdn1.iconfinder.com/data/icons/photo-editing-glyph/32/add_image_photo-512.png"
+            className="w-36 h-36 object-cover"
+          />
+          <img
+            alt="add photo"
+            src="https://cdn1.iconfinder.com/data/icons/photo-editing-glyph/32/add_image_photo-512.png"
+            className="w-36 h-36 object-cover"
+          />
+          <img
+            alt="add photo"
+            src="https://cdn1.iconfinder.com/data/icons/photo-editing-glyph/32/add_image_photo-512.png"
+            className="w-36 h-36 object-cover"
           />
         </div>
       </div>
@@ -142,23 +167,21 @@ function Dashboard() {
               <FileInput id="bg" />
             </div>
             <div className="flex flex-col gap-3">
-              <a
-                href="#"
-                className="text-sm text-red-700 hover:underline "
-              >
+              <a href="#" className="text-sm text-red-700 hover:underline ">
                 Change Password
               </a>
               <TextInput id="city" placeholder="old password" required />
               <TextInput id="city" placeholder="new password" required />
             </div>
             <div className="flex justify-between py-2">
-              <Button gradientMonochrome="failure" onClick={onCloseModal}>Cansel</Button>
+              <Button gradientMonochrome="failure" onClick={onCloseModal}>
+                Cansel
+              </Button>
               <Button gradientMonochrome="lime">Update Profile</Button>
             </div>
           </div>
         </Modal.Body>
       </Modal>
-      
     </div>
   );
 }
