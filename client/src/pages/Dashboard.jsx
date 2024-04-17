@@ -17,6 +17,11 @@ import {
   FileInput,
 } from "flowbite-react";
 import { useState } from "react";
+import {
+  updateFailure,
+  updateStart,
+  updateSuccess,
+} from "../redux/user/userSlice";
 
 function Dashboard() {
   const [formData, setFormData] = useState({});
@@ -104,16 +109,35 @@ function Dashboard() {
         setState("Background photo uploading...");
         await uploadBgImage(bg);
       }
-
+      if (formData.old_pass) {
+        if (formData.old_pass != formData.password) {
+          return dispatch(updateFailure("password doesn't match"));
+        }
+      }
       setState("Updating...");
-      // Perform update logic here
-      setState("Updated Successfully");
+      const { old_pass: old_pass, ...restData } = formData;
+
+      dispatch(updateStart());
+      const res = await fetch(`/api/user/update/${currentUser._id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(restData),
+      });
+      const data2 = await res.json();
+      if (data2.success == false) {
+        return dispatch(updateFailure(data2.message));
+      } else {
+        dispatch(updateSuccess(data2));
+        console.log("updated successfully");
+      }
     } catch (error) {
-      console.error("Error updating:", error);
+      dispatch(updateFailure(error.message));
     } finally {
       setState(null); // Reset state
     }
   };
+
+console.log(formData);
 
   return (
     <div className="bg-slate-300 text-slate-800">
@@ -253,7 +277,7 @@ function Dashboard() {
                   onChange={handleChange}
                 ></textarea>
               </div>
-              <div>
+              <div className="mb-3">
                 <div className="mb-2 block">
                   <Label htmlFor="profilePicture" value="profile picture" />
                 </div>
@@ -264,7 +288,7 @@ function Dashboard() {
                   onChange={handleImageChange}
                 />
               </div>
-              <div>
+              <div className="mb-3">
                 <div className="mb-2 block">
                   <Label htmlFor="bg" value="Background Photo" />
                 </div>
@@ -275,8 +299,8 @@ function Dashboard() {
                   onChange={handleBgChange}
                 />
               </div>
-              <div className="flex flex-col gap-3">
-                <a href="#" className="text-sm text-red-700 hover:underline ">
+              <div className="flex flex-col gap-3 mt-4">
+                <a href="#" className="text-sm text-red-900 hover:underline ">
                   Change Password
                 </a>
                 <TextInput
@@ -285,12 +309,12 @@ function Dashboard() {
                   onChange={handleChange}
                 />
                 <TextInput
-                  id="new_pass"
+                  id="password"
                   placeholder="new password"
                   onChange={handleChange}
                 />
               </div>
-              <div className="flex justify-between py-2">
+              <div className="flex justify-between py-5">
                 <Button gradientMonochrome="failure" onClick={onCloseModal}>
                   Cansel
                 </Button>
@@ -299,7 +323,7 @@ function Dashboard() {
                 </Button>
               </div>
             </form>
-            {/* {state && <span className="text-xl">{state}</span>} */}
+            {error && <span className="text-red-500 ">{error}</span>}
           </div>
         </Modal.Body>
       </Modal>
