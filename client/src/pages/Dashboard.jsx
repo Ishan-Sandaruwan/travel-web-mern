@@ -1,5 +1,13 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
+import { app } from "../firebase";
+
+import { useSelector, useDispatch } from "react-redux";
 import {
   Button,
   Checkbox,
@@ -11,14 +19,101 @@ import {
 import { useState } from "react";
 
 function Dashboard() {
-  const { currentUser } = useSelector((state) => state.user);
+  const [formData, setFormData] = useState({});
+  const [imageFile, setImageFile] = useState(null);
+  const [bg, setBg] = useState(null);
+  const { error, loading, currentUser } = useSelector((state) => state.user);
+  const [state, setState] = useState(null);
+  const dispatch = useDispatch();
   const [openModal, setOpenModal] = useState(false);
-
-  const [email, setEmail] = useState("");
 
   function onCloseModal() {
     setOpenModal(false);
   }
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+  };
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+    }
+  };
+  const handleBgChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setBg(file);
+    }
+  };
+
+  const uploadImage = async (img) => {
+    const storage = getStorage(app);
+    const fileName = new Date().getTime() + img.name;
+    const storageRef = ref(storage, fileName);
+    const uploadTask = uploadBytesResumable(storageRef, img);
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log(progress.toFixed(0));
+      },
+      (error) => {
+        console.error(error.message);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          setFormData({ ...formData, profilePicture: downloadURL });
+        });
+      }
+    );
+  };
+  const uploadBgImage = async (img) => {
+    const storage = getStorage(app);
+    const fileName = new Date().getTime() + img.name;
+    const storageRef = ref(storage, fileName);
+    const uploadTask = uploadBytesResumable(storageRef, img);
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log(progress.toFixed(0));
+      },
+      (error) => {
+        console.error(error.message);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          setFormData({ ...formData, bg: downloadURL });
+        });
+      }
+    );
+  };
+
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    setState("Wait...");
+    try {
+      if (imageFile) {
+        setState("Profile picture uploading...");
+        await uploadImage(imageFile);
+      }
+      if (bg) {
+        setState("Background photo uploading...");
+        await uploadBgImage(bg);
+      }
+
+      setState("Updating...");
+      // Perform update logic here
+      setState("Updated Successfully");
+    } catch (error) {
+      console.error("Error updating:", error);
+    } finally {
+      setState(null); // Reset state
+    }
+  };
 
   return (
     <div className="bg-slate-300 text-slate-800">
@@ -111,74 +206,100 @@ function Dashboard() {
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
               Add or edite your Profile data
             </h3>
-            <div className="flex gap-4">
-              <div className="flex-1">
-                <div className="mb-2 block">
-                  <Label htmlFor="fname" value="First Name" />
+            <form action="" onSubmit={handleUpdate}>
+              <div className="flex gap-4">
+                <div className="flex-1">
+                  <div className="mb-2 block">
+                    <Label htmlFor="firstName" value="First Name" />
+                  </div>
+                  <TextInput
+                    id="firstName"
+                    defaultValue={currentUser.firstName}
+                    onChange={handleChange}
+                  />
                 </div>
-                <TextInput id="fname" value={currentUser.firstName} required />
-              </div>
-              <div className="flex-1">
-                <div className="mb-2 block">
-                  <Label htmlFor="lname" value="Last Name" />
+                <div className="flex-1">
+                  <div className="mb-2 block">
+                    <Label htmlFor="lastName" value="Last Name" />
+                  </div>
+                  <TextInput
+                    id="lastName"
+                    defaultValue={currentUser.lastName}
+                    onChange={handleChange}
+                  />
                 </div>
-                <TextInput id="lname" value={currentUser.lastName} required />
               </div>
-            </div>
-            <div>
-              <div className="mb-2 block">
-                <Label htmlFor="email" value="email" />
+              <div>
+                <div className="mb-2 block">
+                  <Label htmlFor="city" value="Current City" />
+                </div>
+                <TextInput
+                  id="city"
+                  defaultValue={currentUser.city}
+                  onChange={handleChange}
+                />
               </div>
-              <TextInput
-                id="email"
-                type="email"
-                value={currentUser.email}
-                required
-              />
-            </div>
-            <div>
-              <div className="mb-2 block">
-                <Label htmlFor="city" value="Current City" />
+              <div>
+                <div className="mb-2 block">
+                  <Label htmlFor="about" value="About you" />
+                </div>
+                <textarea
+                  name=""
+                  id="about"
+                  cols="46"
+                  rows="4"
+                  className="rounded-md border-slate-400 text-sm"
+                  defaultValue={currentUser.about}
+                  onChange={handleChange}
+                ></textarea>
               </div>
-              <TextInput id="city" value={currentUser.city} required />
-            </div>
-            <div>
-              <div className="mb-2 block">
-                <Label htmlFor="about" value="About you" />
+              <div>
+                <div className="mb-2 block">
+                  <Label htmlFor="profilePicture" value="profile picture" />
+                </div>
+                <FileInput
+                  id="profilePicture"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                />
               </div>
-              <textarea
-                name=""
-                id="about"
-                cols="46"
-                rows="4"
-                className="rounded-md border-slate-400 text-sm"
-              ></textarea>
-            </div>
-            <div>
-              <div className="mb-2 block">
-                <Label htmlFor="profilePic" value="profile picture" />
+              <div>
+                <div className="mb-2 block">
+                  <Label htmlFor="bg" value="Background Photo" />
+                </div>
+                <FileInput
+                  id="bg"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleBgChange}
+                />
               </div>
-              <FileInput id="profilePic" />
-            </div>
-            <div>
-              <div className="mb-2 block">
-                <Label htmlFor="bg" value="Background Photo" />
+              <div className="flex flex-col gap-3">
+                <a href="#" className="text-sm text-red-700 hover:underline ">
+                  Change Password
+                </a>
+                <TextInput
+                  id="old_pass"
+                  placeholder="old password"
+                  onChange={handleChange}
+                />
+                <TextInput
+                  id="new_pass"
+                  placeholder="new password"
+                  onChange={handleChange}
+                />
               </div>
-              <FileInput id="bg" />
-            </div>
-            <div className="flex flex-col gap-3">
-              <a href="#" className="text-sm text-red-700 hover:underline ">
-                Change Password
-              </a>
-              <TextInput id="city" placeholder="old password" required />
-              <TextInput id="city" placeholder="new password" required />
-            </div>
-            <div className="flex justify-between py-2">
-              <Button gradientMonochrome="failure" onClick={onCloseModal}>
-                Cansel
-              </Button>
-              <Button gradientMonochrome="lime">Update Profile</Button>
-            </div>
+              <div className="flex justify-between py-2">
+                <Button gradientMonochrome="failure" onClick={onCloseModal}>
+                  Cansel
+                </Button>
+                <Button gradientMonochrome="lime" type="submit">
+                  Update Profile
+                </Button>
+              </div>
+            </form>
+            {/* {state && <span className="text-xl">{state}</span>} */}
           </div>
         </Modal.Body>
       </Modal>

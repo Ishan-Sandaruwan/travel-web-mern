@@ -74,7 +74,7 @@ export default function Header() {
                 </span>
               </Dropdown.Header>
               <Dropdown.Item icon={HiViewGrid} onClick={()=>navigate('/dashboard')}>Dashboard</Dropdown.Item>
-              <Dropdown.Item icon={HiCog}>Settings</Dropdown.Item>
+              {/* <Dropdown.Item icon={HiCog}>Settings</Dropdown.Item> */}
               <Dropdown.Divider />
               <Dropdown.Item icon={HiLogout} onClick={handleSignOut}>
                 Sign out
