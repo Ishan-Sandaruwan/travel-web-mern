@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button } from "flowbite-react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { PiSignInBold } from "react-icons/pi";
 import { HiBars3BottomRight } from "react-icons/hi2";
 import { Dropdown } from "flowbite-react";
@@ -73,7 +73,7 @@ export default function Header() {
                   {currentUser.email}
                 </span>
               </Dropdown.Header>
-              <Dropdown.Item icon={HiViewGrid}>Dashboard</Dropdown.Item>
+              <Dropdown.Item icon={HiViewGrid} onClick={()=>navigate('/dashboard')}>Dashboard</Dropdown.Item>
               <Dropdown.Item icon={HiCog}>Settings</Dropdown.Item>
               <Dropdown.Divider />
               <Dropdown.Item icon={HiLogout} onClick={handleSignOut}>
