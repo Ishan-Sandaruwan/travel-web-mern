@@ -2,13 +2,6 @@ import { Button, Label, Modal, TextInput, FileInput } from "flowbite-react";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  getDownloadURL,
-  getStorage,
-  ref,
-  uploadBytesResumable,
-} from "firebase/storage";
-import { app } from "../firebase";
-import {
   updateFailure,
   updateStart,
   updateSuccess,
@@ -17,6 +10,7 @@ import uploadImage from "../utils/imageUpload.js";
 
 
 function DashEditeProfile({openModal,onclose}) {
+
   const dispatch = useDispatch();
   const { error, loading, currentUser } = useSelector((state) => state.user);
   const [formData, setFormData] = useState({});
