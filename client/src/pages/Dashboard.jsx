@@ -1,15 +1,17 @@
 import React from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import {Button} from "flowbite-react";
 import { useState } from "react";
 import DashEditeProfile from "../components/DashEditeProfile";
 
 function Dashboard() {
-  const [formData, setFormData] = useState({});
-  const { error, loading, currentUser } = useSelector((state) => state.user);
 
+  const { currentUser } = useSelector((state) => state.user);
+  const [openModal, setOpenModal] = useState(false);
 
-  console.log(formData);
+  function onCloseModal() {
+    setOpenModal(false);
+  }
 
   return (
     <div className="bg-slate-300 text-slate-800">
@@ -94,7 +96,8 @@ function Dashboard() {
         </div>
       </div>
 
-      <DashEditeProfile/>
+      <DashEditeProfile openModal={openModal} onclose={onCloseModal} />
+
     </div>
   );
 }

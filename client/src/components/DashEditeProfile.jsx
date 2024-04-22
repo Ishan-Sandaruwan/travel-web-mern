@@ -13,20 +13,16 @@ import {
   updateStart,
   updateSuccess,
 } from "../redux/user/userSlice";
+import uploadImage from "../utils/imageUpload.js";
 
-function DashEditeProfile() {
+
+function DashEditeProfile({openModal,onclose}) {
   const dispatch = useDispatch();
-  const [openModal, setOpenModal] = useState(false);
   const { error, loading, currentUser } = useSelector((state) => state.user);
-
-
   const [formData, setFormData] = useState({});
   const [imageFile, setImageFile] = useState(null);
   const [bg, setBg] = useState(null);
 
-  function onCloseModal() {
-    setOpenModal(false);
-  }
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
@@ -36,67 +32,23 @@ function DashEditeProfile() {
       setImageFile(file);
     }
   };
-  const handleBgChange = (e) => {
+  const handleBgChange =(e) => {
     const file = e.target.files[0];
     if (file) {
       setBg(file);
     }
   };
 
-  const uploadImage = async (img) => {
-    const storage = getStorage(app);
-    const fileName = new Date().getTime() + img.name;
-    const storageRef = ref(storage, fileName);
-    const uploadTask = uploadBytesResumable(storageRef, img);
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        const progress =
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        console.log(progress.toFixed(0));
-      },
-      (error) => {
-        console.error(error.message);
-      },
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          setFormData({ ...formData, profilePicture: downloadURL });
-        });
-      }
-    );
-  };
-  const uploadBgImage = async (img) => {
-    const storage = getStorage(app);
-    const fileName = new Date().getTime() + img.name;
-    const storageRef = ref(storage, fileName);
-    const uploadTask = uploadBytesResumable(storageRef, img);
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        const progress =
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        console.log(progress.toFixed(0));
-      },
-      (error) => {
-        console.error(error.message);
-      },
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          console.log(downloadURL);
-          setFormData({ ...formData, bg: downloadURL });
-        });
-      }
-    );
-  };
-
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
       if (imageFile) {
-        await uploadImage(imageFile);
+        const downloadURL = await uploadImage(imageFile);
+        setFormData({ ...formData, profilePicture: downloadURL });
       }
       if (bg) {
-        await uploadBgImage(bg);
+        const downloadURL = await uploadImage(bg);
+        setFormData({ ...formData, bg: downloadURL });
       }
       if (formData.old_pass) {
         if (formData.old_pass != formData.password) {
@@ -123,7 +75,7 @@ function DashEditeProfile() {
   };
 
   return (
-    <Modal show={openModal} size="md" onClose={onCloseModal} popup>
+    <Modal show={openModal} size="md" popup onClose={onclose}>
       <Modal.Header />
       <Modal.Body>
         <div className="space-y-6">
@@ -215,7 +167,7 @@ function DashEditeProfile() {
               />
             </div>
             <div className="flex justify-between py-5">
-              <Button gradientMonochrome="failure" onClick={onCloseModal}>
+              <Button gradientMonochrome="failure" onClick={onclose}>
                 Cansel
               </Button>
               <Button
@@ -231,6 +183,7 @@ function DashEditeProfile() {
         </div>
       </Modal.Body>
     </Modal>
+    
   );
 }
 
