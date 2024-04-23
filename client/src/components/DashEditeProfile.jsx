@@ -12,8 +12,11 @@ import {
 } from "../redux/user/userSlice";
 import uploadImage from "../utils/imageUpload.js";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
+import { useNavigate } from "react-router-dom";
+
 
 function DashEditeProfile({ openModal, onclose }) {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { error, loading, currentUser } = useSelector((state) => state.user);
   const [formData, setFormData] = useState({});
@@ -76,10 +79,10 @@ function DashEditeProfile({ openModal, onclose }) {
     e.preventDefault();
     dispatch(deleteStart());
     try {
-      const res = await fetch("/api/user/delete", {
+      const res = await fetch(`/api/user/delete/${currentUser._id}`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(cPass),
+        body: JSON.stringify({ cPass: cPass }),
       });
       const data2 = await res.json();
       if (data2.success == false) {
