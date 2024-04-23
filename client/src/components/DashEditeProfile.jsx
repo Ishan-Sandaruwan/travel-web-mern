@@ -41,6 +41,7 @@ function DashEditeProfile({ openModal, onclose }) {
       setBg(file);
     }
   };
+  console.log(formData);
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
@@ -65,6 +66,7 @@ function DashEditeProfile({ openModal, onclose }) {
         body: JSON.stringify(restData),
       });
       const data2 = await res.json();
+      console.log(data2);
       if (data2.success == false) {
         return dispatch(updateFailure(data2.message));
       } else {

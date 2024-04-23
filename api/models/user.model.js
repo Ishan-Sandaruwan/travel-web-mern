@@ -36,6 +36,9 @@ const userShema = new mongoose.Schema(
     city: {
       type: String,
     },
+    about: {
+      type: String,
+    },
   },
   { timestamps: true }
 );

@@ -14,12 +14,15 @@ function Dashboard() {
   }
 
   return (
-    <div className="bg-slate-300 text-slate-800">
+
+    <div className="bg-slate-300 text-slate-800 " style={{backgroundImage:`linear-gradient(rgba(0,0,0,0),rgba(0,0,0,0.5), rgba(0,0,0,0.8)), url(${currentUser.bg})`,backgroundRepeat:'no-repeat',backgroundSize:'cover'}}>
+      
       <img
         alt="cover photo"
         src={currentUser.bg}
         className="h-[40vh] w-full object-cover"
       />
+
       <div className="max-w-5xl mx-auto bg-white flex flex-col gap-8 p-8 md:-translate-y-8 lg:-translate-y-16 mb-4">
         <div className="flex items-center gap-8">
           <img
@@ -55,13 +58,16 @@ function Dashboard() {
           </Button>
         </div>
       </div>
+
       <div className="max-w-5xl mx-auto flex gap-4 md:-translate-y-8 lg:-translate-y-16">
+        
         <div className="bg-white w-1/4 p-4 flex flex-col gap-2">
           <h3 className="font-semibold text-lg mb-4">About You</h3>
           <p>{currentUser.city || 'add your current city' }</p>
           <p>{currentUser.createdAt}</p>
           <p>{currentUser.about || 'add something about you'}</p>
         </div>
+        
         <div className="bg-white flex-grow p-4 flex flex-wrap ">
           <img
             alt="add photo"
@@ -94,6 +100,7 @@ function Dashboard() {
             className="w-36 h-36 object-cover"
           />
         </div>
+
       </div>
 
       <DashEditeProfile openModal={openModal} onclose={onCloseModal} />
