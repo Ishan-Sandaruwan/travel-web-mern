@@ -5,17 +5,23 @@ import {
   updateFailure,
   updateStart,
   updateSuccess,
+  removeError,
+  deleteStart,
+  deleteFailure,
+  deleteSuccess,
 } from "../redux/user/userSlice";
 import uploadImage from "../utils/imageUpload.js";
+import { HiOutlineExclamationCircle } from "react-icons/hi";
 
-
-function DashEditeProfile({openModal,onclose}) {
-
+function DashEditeProfile({ openModal, onclose }) {
   const dispatch = useDispatch();
   const { error, loading, currentUser } = useSelector((state) => state.user);
   const [formData, setFormData] = useState({});
   const [imageFile, setImageFile] = useState(null);
   const [bg, setBg] = useState(null);
+  const [confirm, setConfirm] = useState(false);
+  const [passModal, setPassModal] = useState(false);
+  const [cPass, setCPass] = useState("");
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -26,13 +32,12 @@ function DashEditeProfile({openModal,onclose}) {
       setImageFile(file);
     }
   };
-  const handleBgChange =(e) => {
+  const handleBgChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       setBg(file);
     }
   };
-
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
@@ -67,6 +72,26 @@ function DashEditeProfile({openModal,onclose}) {
       dispatch(updateFailure(error.message));
     }
   };
+  const handleDelete = async (e) => {
+    e.preventDefault();
+    dispatch(deleteStart());
+    try {
+      const res = await fetch("/api/user/delete", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(cPass),
+      });
+      const data2 = await res.json();
+      if (data2.success == false) {
+        return dispatch(deleteFailure(data2.message));
+      } else {
+        dispatch(deleteSuccess());
+        navigate("/Home");
+      }
+    } catch (error) {
+      dispatch(deleteFailure(error.message));
+    }
+  };
 
   return (
     <Modal show={openModal} size="md" popup onClose={onclose}>
@@ -77,7 +102,7 @@ function DashEditeProfile({openModal,onclose}) {
             Add or edite your Profile data
           </h3>
           <form action="" onSubmit={handleUpdate}>
-            <div className="flex gap-4">
+            <div className="flex gap-4 md:flex-row flex-col">
               <div className="flex-1">
                 <div className="mb-2 block">
                   <Label htmlFor="firstName" value="First Name" />
@@ -174,10 +199,105 @@ function DashEditeProfile({openModal,onclose}) {
             </div>
           </form>
           {error && <span className="text-red-500 ">{error}</span>}
+          <div className="border border-red-400 rounded-md p-4 ">
+            <p className="font-bold text-red-500 mb-6">Danger Zone</p>
+            <Button
+              color="failure"
+              className=""
+              onClick={() => setConfirm(true)}
+            >
+              Delete Your Account
+            </Button>
+          </div>
+
+          {/* confirm account deletion */}
+          <Modal
+            show={confirm}
+            size="md"
+            onClose={() => setConfirm(false)}
+            popup
+          >
+            <Modal.Header />
+            <Modal.Body>
+              <div className="text-center">
+                <HiOutlineExclamationCircle className="mx-auto mb-4 h-14 w-14 text-gray-400 dark:text-gray-200" />
+                <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+                  Are you sure you want to delete Your Account?
+                </h3>
+                <div className="flex justify-center gap-4">
+                  <Button
+                    color="failure"
+                    onClick={() => {
+                      setConfirm(false);
+                      setPassModal(true);
+                      dispatch(removeError());
+                    }}
+                  >
+                    {"Yes, I'm sure"}
+                  </Button>
+                  <Button color="gray" onClick={() => setConfirm(false)}>
+                    No, cancel
+                  </Button>
+                </div>
+              </div>
+            </Modal.Body>
+          </Modal>
+
+          {/* enter password for account delete */}
+          <Modal
+            show={passModal}
+            size="md"
+            onClose={() => {
+              setPassModal(false);
+              setCPass("");
+            }}
+            popup
+          >
+            <Modal.Header />
+            <Modal.Body>
+              <div className="space-y-6">
+                <h3 className="text-xl font-medium text-gray-900 dark:text-white">
+                  Enter password before Delete your account
+                </h3>
+                <div>
+                  <div className="mb-2 block">
+                    <Label htmlFor="cPass" value="Your password" />
+                  </div>
+                  <TextInput
+                    id="cPass"
+                    type="password"
+                    value={cPass}
+                    onChange={(e) => setCPass(e.target.value)}
+                    required
+                  />
+                  {error && (
+                    <span className="text-sm text-red-900">{error}</span>
+                  )}
+                </div>
+                <div className="w-full flex justify-between">
+                  <Button
+                    color="gray"
+                    onClick={() => {
+                      setPassModal(false);
+                      setCPass("");
+                    }}
+                  >
+                    cansel
+                  </Button>
+                  <Button
+                    color="failure"
+                    onClick={handleDelete}
+                    disabled={loading}
+                  >
+                    Delete account
+                  </Button>
+                </div>
+              </div>
+            </Modal.Body>
+          </Modal>
         </div>
       </Modal.Body>
     </Modal>
-    
   );
 }
 
